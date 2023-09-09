@@ -2,9 +2,10 @@
   "name": "docs-server",
   "version": "1.0.0",
   "description": "docs-server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,18 @@
   },
   "homepage": "https://github.com/iamgauravbisht/Docs-Server#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.0.0",
+    "mongoose": "^7.5.0",
     "nodemon": "^3.0.1",
-    "socket.io": "^4.7.1"
+    "socket.io": "^4.7.1",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2"
   }
 }
