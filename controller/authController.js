@@ -8,7 +8,7 @@ const createToken = (id) => {
 };
 
 const handleErrors = (err) => {
-  console.log("error handler", err);
+  console.log("error handler ", err);
   // console.log(err.message, "this is error code", err.code);
   let errors = { username: "", email: "", password: "" };
 
@@ -24,12 +24,20 @@ const handleErrors = (err) => {
       errors.password = err.errors.password.message;
     }
     //validation errors
-    console.log(err.message);
+    // console.log(err.message);
     // if (err.message.includes("user validation failed")) {
     //   Object.values(err.errors).forEach(({ properties }) => {
     //     errors[properties.path] = properties.message;
     //   });
     // }
+  }
+
+  //login errors
+  if (err.message == "Incorrect password") {
+    errors.password = err.message;
+  }
+  if (err.message == "Incorrect email") {
+    errors.email = err.message;
   }
 
   //duplicate error code
@@ -68,9 +76,10 @@ module.exports.verifyAuth_get = async (req, res, next) => {
       if (err) {
         console.log("error verifying token");
         console.log(err.message);
-        res.json({ user: null });
+        res.redirect("/");
+        res.json({ errors: "error verifying token" });
       } else {
-        console.log(decodedToken);
+        console.log("decodedToken", decodedToken);
         let user = await User.findById(decodedToken.id);
         res.json({ user });
         next();
@@ -78,7 +87,7 @@ module.exports.verifyAuth_get = async (req, res, next) => {
     });
   } else {
     console.log("no token");
-    res.json({ user: null });
+    res.json({ errors: "no token" });
     next();
   }
 };
@@ -110,4 +119,33 @@ module.exports.logout_get = (req, res, next) => {
     maxAge: 1,
   });
   res.json({ message: "logged out" });
+};
+
+module.exports.Me = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, "gb secret", async (err, decodedToken) => {
+      if (err) {
+        console.log("error verifying token");
+        console.log(err.message);
+        res.json({ errors: "error verifying token" });
+        res.redirect("/");
+      } else {
+        console.log("decodedToken", decodedToken);
+        const User = await User.findById(decodedToken.id);
+        const user = {
+          email: User.email,
+          username: User.username,
+          date: User.date,
+          id: User._id,
+        };
+        res.json({ user });
+      }
+    });
+  } else {
+    res.redirect("/");
+    res.json({ errors: "no token" });
+  }
+  next();
 };

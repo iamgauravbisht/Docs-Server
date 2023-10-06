@@ -29,32 +29,39 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  recentDocs: {
+    type: Array,
+  },
+  allDocs: {
+    type: Array,
+  },
 });
 
 // Define Document schema
 const documentSchema = new mongoose.Schema({
+  _id: String,
   title: {
     type: String,
     required: true,
+  },
+  owner: {
+    type: String,
+    default: "",
   },
   content: {
     type: String,
     default: "",
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   delta: {
     type: mongoose.Schema.Types.Mixed,
-    required: true,
+    // type: String,
+    default: "",
   },
   sharedWithUsers: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        // ref: "User",
       },
       rights: [
         {
