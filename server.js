@@ -6,6 +6,10 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const socket = require("socket.io");
 const { Document } = require("./model/User");
+const {
+  allDocsUpdateHandler,
+  recentDocsUpdateHandler,
+} = require("./middleware/middleware");
 
 const app = express();
 
@@ -36,13 +40,13 @@ app.post("/login", authController.login_post);
 app.get("/logout", authController.logout_get);
 
 // docs
-app.post("/createDoc", docController.create_post);
-app.get("/deleteDoc", docController.delete_get);
-app.post("/updateDoc", docController.update_post);
-app.get("/editDoc", docController.edit_get);
 app.get("/searchDoc", docController.search_get);
-app.post("/allDocs", docController.all_post);
-app.post("/recentDocs", docController.recent_post);
+app.get("/allDocs", docController.all_get);
+app.get("/recentDocs", docController.recent_get);
+app.post("/saveName", docController.saveName_post);
+app.post("/deleteDoc", docController.deleteDoc_post);
+app.post("/allUsers", docController.allUsers_post);
+app.post("/shareDoc", docController.shareDoc_post);
 
 const io = socket(server, {
   cors: {
@@ -55,19 +59,26 @@ async function findOrCreateDocument(id, userId) {
   if (id == null || userId == null) return;
 
   const document = await Document.findById(id);
-  if (document) return document;
-  return await Document.create({
-    title: "Untitled",
-    _id: id,
-    owner: userId,
-  });
+  if (document) {
+    // await allDocsUpdateHandler(id, userId);
+    await recentDocsUpdateHandler(id, userId);
+    return document;
+  } else {
+    await allDocsUpdateHandler(id, userId);
+    await recentDocsUpdateHandler(id, userId);
+    return await Document.create({
+      title: "Untitled",
+      _id: id,
+      owner: userId,
+    });
+  }
 }
 
 io.on("connection", (socket) => {
   socket.on("get-document", async (documentId, userId) => {
     const document = await findOrCreateDocument(documentId, userId);
     socket.join(documentId);
-    socket.emit("load-document", document.delta);
+    socket.emit("load-document", document.delta, document.title);
 
     socket.on("send-changes", (delta) => {
       socket.broadcast.to(documentId).emit("receive-changes", delta);

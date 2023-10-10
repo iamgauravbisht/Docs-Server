@@ -1,119 +1,161 @@
 const { Document, User } = require("../model/User");
+const mongoose = require("mongoose");
+const { allDocsUpdateHandler } = require("../middleware/middleware");
 
-module.exports.create_post = async (req, res, next) => {
-  const title = "Untitled";
-  const _id = req.body.id;
-  const owner = req.body.userId;
-  //createDoc
-  try {
-    const doc = await Document.create({ title, _id, owner });
-    res.status(201).json({ doc: doc._id });
-  } catch (err) {
-    res.status(400).json({ err });
-  }
-
-  next();
-};
-module.exports.update_post = async (req, res, next) => {
-  const { id, delta } = req.body;
-  //updateDoc
-  try {
-    // Use findByIdAndUpdate to update the document
-    const updatedDoc = await document.findByIdAndUpdate(
-      { _id: id }, // The ID of the document you want to update
-      { delta: delta }, // The updated data you want to set
-      { new: true } // { new: true } ensures that the updated document is returned
-    );
-
-    if (!updatedDoc) {
-      console.log("Document not found.");
-      res.status(404).json({ err: "Document not found." });
-      return;
-    }
-    // The updated document is now in updatedDocument
-    // console.log("Updated Document:", updatedDoc);
-    res.status(201).json({ doc: updatedDoc._id });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ err: error });
-  }
-
-  next();
-};
-module.exports.delete_get = async (req, res, next) => {
-  const { name } = req.body;
-  //createDoc
-
-  next();
-};
-module.exports.edit_get = async (req, res, next) => {
-  //createDoc
-
-  next();
-};
 module.exports.search_get = async (req, res, next) => {
-  //createDoc
-
   next();
 };
-module.exports.all_post = async (req, res, next) => {
-  const documentId = req.body.id;
-  const _id = req.body.userId;
-
+module.exports.all_get = async (req, res, next) => {
   try {
-    if (!newData || !_id) {
-      return res
-        .status(400)
-        .json({ error: "Both documentId and userId are required." });
+    const userId = req.query.userId; // Get the userId from query parameters
+
+    // Find the user by userId and retrieve their recentDocs array
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-    // Use findByIdAndUpdate to update the document
-    const updatedDocument = await User.findByIdAndUpdate(
-      _id, // The _id of the document you want to update
-      // [documentId, ...allDocs], // The updated data you want to set
-      { $push: { allDocs: documentId } },
-      { new: true } // { new: true } ensures that the updated document is returned
+
+    let allDocsIds = user.allDocs || []; // Get recentDocs array from the user
+    allDocsIds = Array.from(new Set(allDocsIds));
+
+    const allDocs = await Promise.all(
+      allDocsIds.map(async (docId) => {
+        // Find each document by its ID and add it to the recentDocs array
+        const document = await Document.findById(docId).exec();
+
+        return document;
+      })
     );
 
-    if (!updatedDocument) {
-      console.log("Document not found.");
-      return;
-    }
-    // The updated document is now in updatedDocument
-    res.status(200).json({ updatedDocument });
+    res.json(allDocs.reverse());
   } catch (error) {
-    res.status(400).json({ message: "allDocs_post not working" });
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
-
   next();
 };
-module.exports.recent_post = async (req, res, next) => {
-  //recentDoc
-  const documentId = req.body.id;
-  const _id = req.body.userId;
-
+module.exports.recent_get = async (req, res, next) => {
   try {
-    if (!documentId || !_id) {
-      return res
-        .status(400)
-        .json({ error: "Both documentId and userId are required." });
+    const userId = req.query.userId; // Get the userId from query parameters
+
+    // Find the user by userId and retrieve their recentDocs array
+    const user = await User.findById(userId).exec();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-    // Use findByIdAndUpdate to update the document
-    const updatedDocument = await User.findByIdAndUpdate(
-      _id, // The _id of the document you want to update
-      // [documentId, ...allDocs], // The updated data you want to set
-      { $push: { recentDocs: documentId } },
-      { new: true } // { new: true } ensures that the updated document is returned
+
+    let recentDocsIds = user.recentDocs || []; // Get recentDocs array from the user
+    recentDocsIds.reverse();
+    recentDocsIds = Array.from(new Set(recentDocsIds));
+
+    const recentDocs = await Promise.all(
+      recentDocsIds.map(async (docId) => {
+        // Find each document by its ID and add it to the recentDocs array
+        const document = await Document.findById(docId).exec();
+
+        return document;
+      })
     );
 
-    if (!updatedDocument) {
-      console.log("Document not found.");
-      return;
-    }
-    // The updated document is now in updatedDocument
-    res.status(200).json({ updatedDocument });
+    res.json(recentDocs);
   } catch (error) {
-    res.status(400).json({ message: "recentDocs_post not working" });
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
-
   next();
+};
+module.exports.saveName_post = async (req, res, next) => {
+  const documentId = req.body.id;
+  const title = req.body.title;
+  try {
+    await Document.findByIdAndUpdate(documentId, { title: title });
+    res.status(200).json({ message: "document name updated" });
+  } catch (err) {
+    res.status(400).json({ message: "document not found" });
+  }
+  next();
+};
+module.exports.deleteDoc_post = async (req, res, next) => {
+  const documentId = req.body.id;
+  try {
+    await Document.findByIdAndRemove(documentId);
+    res.status(200).json({ message: "document deleted" });
+  } catch (err) {
+    res.status(400).json({ message: "document not found" });
+  }
+  next();
+};
+module.exports.allUsers_post = async (req, res, next) => {
+  const documentId = req.body.id;
+  try {
+    const document = await Document.findById(documentId);
+    const sharedWithUsers = document.sharedWithUsers;
+    const users = [];
+    for (let i = 0; i < sharedWithUsers.length; i++) {
+      const user = await User.findById(sharedWithUsers[i].user);
+      users.push({
+        id: user._id,
+        username: user.username,
+        rights: sharedWithUsers[i].rights,
+      });
+    }
+    res.status(200).json({ users: users });
+  } catch (err) {
+    res.status(400).json({ message: "document not found" });
+  }
+  next();
+};
+module.exports.shareDoc_post = async (req, res, next) => {
+  const _id = req.body.id; // document id
+  const addUserId = req.body.addUserId;
+  const rights = req.body.rights;
+
+  try {
+    if (!mongoose.isValidObjectId(addUserId)) {
+      throw new Error("user not found");
+    }
+    const user = await User.findById(addUserId);
+    if (!user) {
+      throw new Error("user not found");
+    }
+
+    const document = await Document.findById(_id);
+    if (!document) {
+      throw new Error("document not found");
+    }
+
+    if (document.owner == addUserId) {
+      throw new Error("user is owner");
+    }
+
+    if (
+      document.sharedWithUsers.find(
+        (sharedUser) => sharedUser.user == addUserId
+      )
+    ) {
+      throw new Error("user already shared");
+    }
+
+    const documentUpdate = await Document.findByIdAndUpdate(
+      _id,
+      {
+        $push: { sharedWithUsers: { user: addUserId, rights: rights } },
+      },
+      { new: true }
+    );
+
+    if (!documentUpdate) {
+      throw new Error("document not found");
+    }
+
+    const updatingDocAtOtherUser = await allDocsUpdateHandler(_id, addUserId);
+    if (!updatingDocAtOtherUser) {
+      throw new Error("Internal server error X2");
+    }
+    res.status(200).json({ message: "document shared" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };

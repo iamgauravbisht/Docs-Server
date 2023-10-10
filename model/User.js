@@ -48,6 +48,10 @@ const documentSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   content: {
     type: String,
     default: "",
@@ -63,12 +67,10 @@ const documentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         // ref: "User",
       },
-      rights: [
-        {
-          type: String,
-          enum: ["read", "write"], // possible values for rights are 'read' and 'write'
-        },
-      ],
+      rights: {
+        type: String,
+        enum: ["read", "read&write"], // possible values for rights are 'read' and 'write'
+      },
     },
   ],
 });
