@@ -5,7 +5,7 @@ const docController = require("./controller/docController");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const socket = require("socket.io");
-const { Document } = require("./model/User");
+const { Document, User } = require("./model/User");
 const {
   allDocsUpdateHandler,
   recentDocsUpdateHandler,
@@ -74,11 +74,32 @@ async function findOrCreateDocument(id, userId) {
   }
 }
 
+async function documentOwner(owner) {
+  const _id = owner;
+  const user = await User.findById(_id);
+  return user.username;
+}
+
+function checkDocRole(document, userId) {
+  if (document.owner == userId) return "owner";
+
+  for (const sharedUser of document.sharedWithUsers) {
+    if (sharedUser.user.toString() === userId) {
+      if (sharedUser.rights === "read") return "read";
+      if (sharedUser.rights === "read&write") return "read&write";
+    }
+  }
+
+  return "unauthorized";
+}
+
 io.on("connection", (socket) => {
   socket.on("get-document", async (documentId, userId) => {
     const document = await findOrCreateDocument(documentId, userId);
+    const role = checkDocRole(document, userId);
+    const owner = await documentOwner(document.owner);
     socket.join(documentId);
-    socket.emit("load-document", document.delta, document.title);
+    socket.emit("load-document", document.delta, document.title, role, owner);
 
     socket.on("send-changes", (delta) => {
       socket.broadcast.to(documentId).emit("receive-changes", delta);
