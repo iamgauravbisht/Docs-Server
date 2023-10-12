@@ -76,19 +76,16 @@ module.exports.verifyAuth_get = async (req, res, next) => {
       if (err) {
         console.log("error verifying token");
         console.log(err.message);
-        res.redirect("/");
         res.json({ errors: "error verifying token" });
       } else {
         console.log("decodedToken", decodedToken);
         let user = await User.findById(decodedToken.id);
         res.json({ user });
-        next();
       }
     });
   } else {
     console.log("no token");
     res.json({ errors: "no token" });
-    next();
   }
 };
 
@@ -147,5 +144,5 @@ module.exports.Me = (req, res, next) => {
     res.redirect("/");
     res.json({ errors: "no token" });
   }
-  next();
+ 
 };
