@@ -23,13 +23,11 @@ const handleErrors = (err) => {
     if (err.errors.password) {
       errors.password = err.errors.password.message;
     }
-    //validation errors
-    // console.log(err.message);
-    // if (err.message.includes("user validation failed")) {
-    //   Object.values(err.errors).forEach(({ properties }) => {
-    //     errors[properties.path] = properties.message;
-    //   });
-    // }
+    
+    //validation errors for username
+    if (err.message.includes("User validation failed")) {
+      errors.username = err.errors.username.message;
+    }
   }
 
   //login errors
