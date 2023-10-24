@@ -13,8 +13,18 @@ const {
 
 const app = express();
 
+const allowedOrigins = [
+  "https://iamgauravbisht.github.io/gauravdocs",
+  "https://iamgauravbisht.github.io",
+];
 const corsOptions = {
-  origin: "https://iamgauravbisht.github.io/gauravdocs",
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   optionSuccessStatus: 200,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
