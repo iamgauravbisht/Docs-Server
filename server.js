@@ -14,7 +14,7 @@ const {
 const app = express();
 
 const allowedOrigins = [
-  "https://iamgauravbisht.github.io/gauravdocs",
+  "https://iamgauravbisht.github.io/gauravdocs/",
   // "https://iamgauravbisht.github.io",
 ];
 const corsOptions = {
