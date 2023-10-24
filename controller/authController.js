@@ -127,6 +127,7 @@ module.exports.Me = (req, res, next) => {
       if (err) {
         console.log("error verifying token");
         console.log(err.message);
+        res.redirect("https://iamgauravbisht.github.io/gauravdocs");
         res.json({ errors: "error verifying token" });
       } else {
         console.log("decodedToken", decodedToken);
@@ -141,6 +142,7 @@ module.exports.Me = (req, res, next) => {
       }
     });
   } else {
+    res.redirect("https://iamgauravbisht.github.io/gauravdocs");
     res.json({ errors: "no token" });
   }
 };
