@@ -128,7 +128,6 @@ module.exports.Me = (req, res, next) => {
         console.log("error verifying token");
         console.log(err.message);
         res.json({ errors: "error verifying token" });
-        res.redirect("/");
       } else {
         console.log("decodedToken", decodedToken);
         const User = await User.findById(decodedToken.id);
@@ -142,7 +141,6 @@ module.exports.Me = (req, res, next) => {
       }
     });
   } else {
-    res.redirect("/");
     res.json({ errors: "no token" });
   }
 };
