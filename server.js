@@ -60,7 +60,7 @@ app.post("/shareDoc", docController.shareDoc_post);
 
 const io = socket(server, {
   cors: {
-    origin: "https://iamgauravbisht.github.io/gauravdocs/",
+    origin: "https://iamgauravbisht.github.io",
     methods: ["GET", "POST"],
   },
 });
