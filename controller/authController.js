@@ -57,6 +57,7 @@ module.exports.signup_post = async (req, res, next) => {
       secure: true,
       sameSite: "None",
       domain: ".docserver-ecsy.onrender.com",
+      path: "/",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -101,6 +102,7 @@ module.exports.login_post = async (req, res, next) => {
       secure: true,
       sameSite: "None",
       domain: ".docserver-ecsy.onrender.com",
+      path: "/",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -117,6 +119,7 @@ module.exports.logout_get = (req, res, next) => {
     secure: true,
     sameSite: "None",
     domain: ".docserver-ecsy.onrender.com",
+    path: "/",
     maxAge: 1,
   });
   res.json({ message: "logged out" });
