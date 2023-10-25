@@ -56,7 +56,6 @@ module.exports.signup_post = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "iamgauravbisht.github.io",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -100,7 +99,6 @@ module.exports.login_post = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "iamgauravbisht.github.io",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -116,7 +114,6 @@ module.exports.logout_get = (req, res, next) => {
     httpOnly: true,
     secure: true,
     sameSite: "None",
-    domain: "iamgauravbisht.github.io",
     maxAge: 1,
   });
   res.json({ message: "logged out" });
