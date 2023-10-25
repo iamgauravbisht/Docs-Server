@@ -26,9 +26,8 @@ const corsOptions = {
     }
   },
   credentials: true,
-  optionSuccessStatus: 200,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type, Authorization , X-Requested-With",
+  allowedHeaders: "Content-Type, Authorization",
 };
 
 // Middleware
