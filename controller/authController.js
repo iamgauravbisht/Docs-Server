@@ -54,9 +54,8 @@ module.exports.signup_post = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      sameSite: "None",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
       secure: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({ user: user._id });
@@ -97,9 +96,8 @@ module.exports.login_post = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      sameSite: "None",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
       secure: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({ user: user._id });
@@ -112,9 +110,8 @@ module.exports.login_post = async (req, res, next) => {
 module.exports.logout_get = (req, res, next) => {
   res.cookie("jwt", "", {
     httpOnly: true,
-    sameSite: "None",
-    maxAge: 1,
     secure: true,
+    maxAge: 1,
   });
   res.json({ message: "logged out" });
 };
