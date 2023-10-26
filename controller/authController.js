@@ -100,7 +100,7 @@ module.exports.login_post = async (req, res, next) => {
       httpOnly: true,
       secure: true,
       SameSite: "None",
-      domain: "docserver-ecsy.onrender.com",
+      domain: "iamgauravbisht.github.io",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
