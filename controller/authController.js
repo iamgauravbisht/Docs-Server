@@ -49,18 +49,9 @@ module.exports.signup_post = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
     const user = await User.create({ username, email, password });
-
     const token = createToken(user._id);
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      // secure: true,
-      SameSite: "Lax",
-      // domain: ".docserver-ecsy.onrender.com",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(201).json({ user: user._id });
+    res.status(201).json({ user: user._id, cookie: token });
   } catch (err) {
     // Pass the error to the next middleware or error handler
     const errors = handleErrors(err);
@@ -70,7 +61,7 @@ module.exports.signup_post = async (req, res, next) => {
 
 module.exports.verifyAuth_get = async (req, res, next) => {
   const token = req.cookies.jwt;
-
+  console.log("token", token);
   if (token) {
     jwt.verify(token, "gb secret", async (err, decodedToken) => {
       if (err) {
@@ -96,15 +87,7 @@ module.exports.login_post = async (req, res, next) => {
 
     const token = createToken(user._id);
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: true,
-      SameSite: "None",
-      domain: ".iamgauravbisht.github.io",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(201).json({ user: user._id });
+    res.status(201).json({ user: user._id, cookie: token });
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
@@ -112,13 +95,6 @@ module.exports.login_post = async (req, res, next) => {
 };
 
 module.exports.logout_get = (req, res, next) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    // secure: true,
-    SameSite: "Lax",
-    // domain: ".docserver-ecsy.onrender.com",
-    maxAge: 1,
-  });
   res.json({ message: "logged out" });
 };
 
