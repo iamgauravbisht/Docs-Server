@@ -99,9 +99,10 @@ module.exports.login_post = async (req, res, next) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       // secure: true,
-      SameSite: "None",
+      SameSite: "Lax",
       // domain: ".docserver-ecsy.onrender.com",
       maxAge: 3 * 24 * 60 * 60 * 1000,
+      Partitioned: true,
     });
 
     res.status(201).json({ user: user._id });
