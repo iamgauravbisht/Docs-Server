@@ -60,7 +60,7 @@ module.exports.signup_post = async (req, res, next) => {
 };
 
 module.exports.verifyAuth_get = async (req, res, next) => {
-  const token = req.cookies.jwt;
+  const token = req.body.jwt;
   console.log("token", token);
   if (token) {
     jwt.verify(token, "gb secret", async (err, decodedToken) => {
