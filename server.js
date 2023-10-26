@@ -48,7 +48,6 @@ app.post("/signup", authController.signup_post);
 app.get("/verifyAuth", authController.verifyAuth_get);
 app.get("/me", authController.Me);
 app.post("/login", authController.login_post);
-app.get("/logout", authController.logout_get);
 
 // docs
 app.get("/searchDoc", docController.search_get);

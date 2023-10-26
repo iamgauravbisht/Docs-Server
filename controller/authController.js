@@ -94,10 +94,6 @@ module.exports.login_post = async (req, res, next) => {
   }
 };
 
-module.exports.logout_get = (req, res, next) => {
-  res.json({ message: "logged out" });
-};
-
 module.exports.Me = (req, res, next) => {
   const token = req.query.jwt;
   if (token) {
