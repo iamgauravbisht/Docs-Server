@@ -35,13 +35,6 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.setHeader(
-    "Set-Cookie",
-    "__Secure-FIRSTPARTY=docserver-ecsy.onrender.com  onrender.com; Secure; HttpOnly; SameSite=None"
-  );
-  next();
-});
 // app.use(authController.verifyAuth_get());
 
 // Create a server using Express app
