@@ -32,5 +32,8 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": "16.18.0"
   }
 }
