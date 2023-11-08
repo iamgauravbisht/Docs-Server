@@ -43,6 +43,9 @@ const server = app.listen(3000, () => {
 });
 
 //----------------------------- routes------------------------------//
+app.get("/", (req, res) => {
+  res.send("server up!");
+});
 // auths
 app.post("/signup", authController.signup_post);
 app.get("/verifyAuth", authController.verifyAuth_get);
