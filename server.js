@@ -10,6 +10,8 @@ const {
   allDocsUpdateHandler,
   recentDocsUpdateHandler,
 } = require("./middleware/middleware");
+require("dotenv").config();
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -38,7 +40,7 @@ app.use(cookieParser());
 // app.use(authController.verifyAuth_get());
 
 // Create a server using Express app
-const server = app.listen(3000, () => {
+const server = app.listen(PORT, () => {
   console.log("Server is running on port 3000");
 });
 
