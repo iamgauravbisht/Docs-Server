@@ -40,7 +40,7 @@ app.use(cookieParser());
 // app.use(authController.verifyAuth_get());
 
 // Create a server using Express app
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT || 3001, () => {
   console.log("Server is running on port 3000");
 });
 
